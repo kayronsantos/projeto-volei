@@ -25,33 +25,58 @@ function populateTable() {
     });
 }
 
-// Distância Euclidiana com normalização
+// Função para padronizar os dados (z-score)
+function standardizeData(data) {
+    const means = data[0].map((_, colIndex) => {
+        return data.reduce((sum, row) => sum + row[colIndex], 0) / data.length;
+    });
+
+    const stdDevs = data[0].map((_, colIndex) => {
+        const variance = data.reduce((sum, row) => sum + (row[colIndex] - means[colIndex]) ** 2, 0) / data.length;
+        return Math.sqrt(variance);
+    });
+
+    return data.map(row => {
+        return row.map((value, colIndex) => {
+            return (value - means[colIndex]) / stdDevs[colIndex];
+        });
+    });
+}
+
+// Distância Euclidiana sem normalização manual
 function euclideanDistance(point1, point2) {
     let sum = 0;
     for (let i = 0; i < point1.length; i++) {
-        sum += ((point1[i] - point2[i]) / 100) ** 2; // Normaliza pra evitar escalas grandes
+        sum += (point1[i] - point2[i]) ** 2;
     }
     return Math.sqrt(sum);
 }
 
 // K-Means com centroides fixos iniciais
 function kMeans(data, k, maxIterations = 50) {
+    // Padroniza os dados
+    const standardizedData = standardizeData(data);
+
+    // Inicializa os centroides
     let centroids = [
         [180, 75, 60], // Levantador
         [195, 80, 85], // Oposto
         [200, 65, 70]  // Central
     ].slice(0, k);
 
+    // Padroniza os centroides iniciais
+    centroids = standardizeData(centroids);
+
     let clusters = new Array(data.length);
     let iteration = 0;
 
     while (iteration < maxIterations) {
         let changed = false;
-        for (let i = 0; i < data.length; i++) {
+        for (let i = 0; i < standardizedData.length; i++) {
             let minDistance = Infinity;
             let clusterIndex = 0;
             for (let j = 0; j < k; j++) {
-                let distance = euclideanDistance(data[i], centroids[j]);
+                let distance = euclideanDistance(standardizedData[i], centroids[j]);
                 if (distance < minDistance) {
                     minDistance = distance;
                     clusterIndex = j;
@@ -67,10 +92,10 @@ function kMeans(data, k, maxIterations = 50) {
 
         let newCentroids = Array(k).fill().map(() => Array(data[0].length).fill(0));
         let counts = Array(k).fill(0);
-        for (let i = 0; i < data.length; i++) {
+        for (let i = 0; i < standardizedData.length; i++) {
             let cluster = clusters[i];
             for (let j = 0; j < data[0].length; j++) {
-                newCentroids[cluster][j] += data[i][j];
+                newCentroids[cluster][j] += standardizedData[i][j];
             }
             counts[cluster]++;
         }
