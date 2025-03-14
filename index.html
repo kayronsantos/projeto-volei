@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clube de Vôlei Estrela</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Clube de Vôlei Estrela</h1>
+        <p>Análise Inteligente de Jogadores</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Dados</h2>
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>Jogador</th>
+                        <th>Sexo</th>
+                        <th>Altura (cm)</th>
+                        <th>Impulsão (cm)</th>
+                        <th>Ataques Certos (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="data-body"></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Posições (K-Means)</h2>
+            <button onclick="runUnsupervised()">Analisar Posições</button>
+            <div id="unsupervised-results"></div>
+            <canvas id="unsupervised-chart" width="300" height="200"></canvas>
+        </div>
+
+        <div class="card">
+            <h2>Nível do Time (Regressão)</h2>
+            <button onclick="runSupervised()">Calcular Nível</button>
+            <div id="supervised-results"></div>
+            <canvas id="supervised-chart" width="300" height="200"></canvas>
+        </div>
+
+        <div class="card">
+            <h2>Novo Jogador</h2>
+            <div class="input-group">
+                <input type="number" id="new-height" placeholder="Altura (cm)" min="150">
+                <input type="number" id="new-jump" placeholder="Impulsão (cm)" min="0">
+                <input type="number" id="new-attacks" placeholder="Ataques (%)" min="0" max="100">
+            </div>
+            <button onclick="predictNewPlayer()">Prever</button>
+            <div id="prediction-results"></div>
+        </div>
+    </div>
+
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
